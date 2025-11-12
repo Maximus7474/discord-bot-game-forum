@@ -1,6 +1,6 @@
 {
     "apps": [{
-        "name": "Discord Typescript Bot",
+        "name": "discord-bot-game-forum",
         "cwd": "./",
         "script": "npm run start",
         "log_date_format": ""
