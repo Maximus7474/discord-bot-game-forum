@@ -48,9 +48,9 @@ class AntiPostArchiver {
         })
     }
 
-    static addNewPost(postId: string) {
+    static addNewPost(postId: string, suppressWarn: boolean = false) {
         if (this.postIds.includes(postId)) {
-            logger.warn(`Post (id: ${postId}) is already listed, ignoring...`);
+            if (!suppressWarn) logger.warn(`Post (id: ${postId}) is already listed, ignoring...`);
             return;
         }
 
