@@ -1,3 +1,5 @@
+# ToDo: create a proper guide to setup via docker, i'm too clueless atm
+
 FROM node:20-alpine AS builder
 
 # Create app directory
