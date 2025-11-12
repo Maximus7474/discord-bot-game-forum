@@ -5,7 +5,7 @@ import AntiPostArchiver from "./anti-postarchiver";
 const DEBOUNCE_DELAY = 300;
 
 class ForumPosts {
-    static async addPost(user: User, post: PublicThreadChannel, role: Role | APIRole): Promise<{
+    static async addPost(user: User, post: PublicThreadChannel, guildId: string, role: Role | APIRole): Promise<{
         created: boolean;
         dbid: string;
         roles: { role: string }[];
@@ -34,7 +34,7 @@ class ForumPosts {
             dBPost = await prisma.forum_posts.create({
                 data: {
                     post_id: post.id,
-                    guild_id: post.guildId,
+                    guild_id: guildId,
                     usersId: dBUser.id,
                 },
                 select: {
