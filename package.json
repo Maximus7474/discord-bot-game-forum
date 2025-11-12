@@ -1,7 +1,7 @@
 {
-  "name": "discord-ts-boilerplate",
-  "version": "2.4.1",
-  "description": "Discord bot built in TypeScript using discord.js",
+  "name": "discord-bot-game-forum",
+  "version": "0.0.0",
+  "description": "Simple bot that allows users to select roles from a discord forum by adding a reaction.",
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
