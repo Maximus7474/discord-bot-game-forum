@@ -44,9 +44,11 @@ class ForumPosts {
             created = true;
         }
 
+        const dbid: string = dBPost!.id;
+
         await prisma.post_roles.create({
             data: {
-                forum_postsId: dBPost.id,
+                forum_postsId: dbid,
                 role: role.id,
                 usersId: dBUser.id,
             }
@@ -57,13 +59,13 @@ class ForumPosts {
                 role: true,
             },
             where: {
-                forum_postsId: dBPost.id,
+                forum_postsId: dbid,
             },
         });
 
         AntiPostArchiver.addNewPost(post.id, true);
 
-        return { created, dbid: dBPost.id, roles };
+        return { created, dbid: dbid, roles };
     }
 
     private static debounceTimeouts: Map<string, NodeJS.Timeout> = new Map();
@@ -94,7 +96,7 @@ class ForumPosts {
                         take: 20,
                     });
 
-                    const formattedResults = results.map(post => ({
+                    const formattedResults = results.map((post: { id: string; post_id: string; }) => ({
                         name: post.post_id,
                         value: post.id,
                     }));
