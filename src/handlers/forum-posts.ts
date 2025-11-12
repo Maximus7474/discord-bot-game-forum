@@ -1,5 +1,6 @@
 import type { APIRole, PublicThreadChannel, Role, User } from "discord.js";
 import { prisma } from "../utils/prisma";
+import AntiPostArchiver from "./anti-postarchiver";
 
 const DEBOUNCE_DELAY = 300;
 
@@ -58,7 +59,9 @@ class ForumPosts {
             where: {
                 forum_postsId: dBPost.id,
             },
-        })
+        });
+
+        AntiPostArchiver.addNewPost(post.id, true);
 
         return { created, dbid: dBPost.id, roles };
     }
@@ -121,8 +124,10 @@ class ForumPosts {
             },
         });
 
-        if (result.count > 0) return { success: true };
-        else return { success: false, message: 'No post was found' };
+        if (result.count > 0) {
+            AntiPostArchiver.removePost(post.id);
+            return { success: true };
+        } else return { success: false, message: 'No post was found' };
     }
 }
 
