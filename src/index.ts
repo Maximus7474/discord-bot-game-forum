@@ -7,6 +7,7 @@ import Config from './utils/config';
 import LoadCommands from './utils/initialisation/load_commands';
 import LoadEvents from './utils/initialisation/load_events';
 import LoadStaticMessages from './utils/initialisation/load_static_messages';
+import AntiPostArchiver from './handlers/anti-postarchiver';
 
 const client: DiscordClient = new Client({
     intents: [
@@ -28,5 +29,6 @@ client.autocompleteCommands = new Collection();
 LoadCommands(client);
 LoadEvents(client);
 LoadStaticMessages(client);
+AntiPostArchiver.initialize(client);
 
 client.login(Config.DISCORD_BOT_TOKEN);
