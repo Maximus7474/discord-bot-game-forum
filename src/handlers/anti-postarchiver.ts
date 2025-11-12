@@ -56,6 +56,12 @@ class AntiPostArchiver {
 
         this.postIds.push(postId);
     }
+
+    static removePost(postId: string) {
+        const index = this.postIds.indexOf(postId);
+
+        if (index > - 1) this.postIds.splice(index, 1);
+    }
 }
 
 export default AntiPostArchiver;
