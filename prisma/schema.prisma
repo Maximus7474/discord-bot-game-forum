@@ -13,8 +13,34 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model fav_food {
-  discord_id     String  @id @unique
-  favourite_food String
-  custom_choice  Boolean @default(false)
+model forum_posts {
+  id         String       @id @unique @default(cuid())
+  post_id    String       @unique
+  guild_id   String
+  added_by   users        @relation(fields: [usersId], references: [id])
+  added_at   DateTime     @default(now())
+  usersId    String
+  post_roles post_roles[]
+}
+
+model users {
+  id           String        @id @unique @default(cuid())
+  user_id      String        @unique
+  username     String        @unique
+  display_name String?
+  avatar       String?
+  added_at     DateTime      @default(now())
+  updated_at   DateTime      @default(now()) @updatedAt
+  forum_posts  forum_posts[]
+  post_roles   post_roles[]
+}
+
+model post_roles {
+  id            String      @id @unique @default(cuid())
+  post          forum_posts @relation(fields: [forum_postsId], references: [id])
+  role          String
+  added_by      users       @relation(fields: [usersId], references: [id])
+  added_at      DateTime    @default(now())
+  forum_postsId String
+  usersId       String
 }
