@@ -26,7 +26,7 @@ CREATE TABLE "post_roles" (
     "added_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "forum_postsId" TEXT NOT NULL,
     "usersId" TEXT NOT NULL,
-    CONSTRAINT "post_roles_forum_postsId_fkey" FOREIGN KEY ("forum_postsId") REFERENCES "forum_posts" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "post_roles_forum_postsId_fkey" FOREIGN KEY ("forum_postsId") REFERENCES "forum_posts" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "post_roles_usersId_fkey" FOREIGN KEY ("usersId") REFERENCES "users" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
@@ -47,3 +47,6 @@ CREATE UNIQUE INDEX "users_username_key" ON "users"("username");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "post_roles_id_key" ON "post_roles"("id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "post_roles_forum_postsId_role_key" ON "post_roles"("forum_postsId", "role");
