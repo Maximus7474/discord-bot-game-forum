@@ -112,6 +112,18 @@ class ForumPosts {
             }
         });
     }
+
+    static async deletePost(guildId: string, post: PublicThreadChannel): Promise<{ success: boolean; message?: string }> {
+        const result = await prisma.forum_posts.deleteMany({
+            where: {
+                post_id: post.id,
+                guild_id: guildId,
+            },
+        });
+
+        if (result.count > 0) return { success: true };
+        else return { success: false, message: 'No post was found' };
+    }
 }
 
 export default ForumPosts;
