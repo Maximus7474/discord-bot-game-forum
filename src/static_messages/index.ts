@@ -1,5 +1,1 @@
-import example from "./example";
-
-export default [
-    example,
-];
+export default [];
