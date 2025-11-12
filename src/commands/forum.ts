@@ -58,10 +58,22 @@ export default new SlashCommand({
                 return;
             }
 
+            if (guild.id !== (post as PublicThreadChannel).guildId) {
+                await interaction.reply({
+                    embeds: [new EmbedBuilder()
+                        .setTitle('Failed to add post')
+                        .setDescription(`The provided channel: <#${post?.id ?? 'no channel'}> is not on this guild's (${guild.name}) channel list.`)
+                        .setColor(Colors.DarkRed)
+                    ],
+                    flags: MessageFlags.Ephemeral,
+                });
+                return;
+            }
+
             try {
                 const response: {
                     created: boolean; dbid: string; roles: { role: string }[];
-                } = await ForumPosts.addPost(user, post as PublicThreadChannel, role);
+                } = await ForumPosts.addPost(user, post as PublicThreadChannel, guild.id, role);
 
                 const description = [
                     `The role **${role.name}** (<@&${role.id}>) has been successfully linked to the forum post <#${post.id}>.`,
