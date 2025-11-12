@@ -20,7 +20,7 @@
     "typescript"
   ],
   "author": "Maximus7474",
-  "license": "MIT",
+  "license": "AGPL-3.0-only",
   "dependencies": {
     "@prisma/client": "6.15.0",
     "colors": "^1.4.0",
