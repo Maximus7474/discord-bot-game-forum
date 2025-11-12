@@ -37,7 +37,7 @@ model users {
 
 model post_roles {
   id            String      @id @unique @default(cuid())
-  post          forum_posts @relation(fields: [forum_postsId], references: [id])
+  post          forum_posts @relation(fields: [forum_postsId], references: [id], onDelete: Cascade)
   role          String
   added_by      users       @relation(fields: [usersId], references: [id])
   added_at      DateTime    @default(now())
