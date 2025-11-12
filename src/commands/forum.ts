@@ -23,6 +23,20 @@ export default new SlashCommand({
                 .setDescription('Role to link to the post react')
                 .setRequired(true)
             )
+        )
+        .addSubcommand(c =>
+            c.setName('remove')
+            .setDescription('Remove all roles associated with post')
+            .addChannelOption(o =>
+                o.setName('post')
+                .setDescription('Forum post to remove all roles from')
+                .setRequired(true)
+            )
+            .addBooleanOption(o =>
+                o.setName('delete-post')
+                .setDescription('Do you want the bot to also delete the channel ?')
+                .setRequired(false)
+            )
         ),
     callback: async (logger, client, interaction) => {
         const { user, options, guild } = interaction;
@@ -106,6 +120,55 @@ export default new SlashCommand({
                     flags: MessageFlags.Ephemeral,
                 });
             }
+        } else if (subcommand === 'remove') {
+            const post = options.getChannel('post', true);
+            const deleteThread = options.getBoolean('delete', false) ?? false;
+
+            const isThread = post.type === ChannelType.PublicThread;
+
+            if (!isThread) {
+                await interaction.reply({
+                    embeds: [new EmbedBuilder()
+                        .setTitle('Failed to delete thread')
+                        .setDescription(`The provided channel: <#${post?.id ?? 'no channel'}> is not a thread from a forum channel.`)
+                        .setColor(Colors.DarkRed)
+                    ],
+                    flags: MessageFlags.Ephemeral,
+                });
+                return;
+            }
+
+            const result = await ForumPosts.deletePost(guild.id, (post as PublicThreadChannel));
+
+            if (!result.success) {
+                await interaction.reply({
+                    embeds: [new EmbedBuilder()
+                        .setTitle('Failed to delete thread')
+                        .setDescription(result.message ?? 'Unknown reason.')
+                        .setColor(Colors.DarkRed)
+                    ],
+                    flags: MessageFlags.Ephemeral,
+                });
+                return;
+            }
+
+            if (deleteThread) {
+                await (post as PublicThreadChannel).delete(`Removed by ${user.username} (${user.id}) via ${client.user?.username}'s command.`);
+            }
+
+            await interaction.reply({
+                embeds: [new EmbedBuilder()
+                    .setTitle('Action was successful')
+                    .setDescription(
+                        'Post was removed from the database' +
+                        deleteThread
+                            ? ' and the thread was deleted'
+                            : ''
+                    )
+                    .setColor(Colors.DarkGreen)
+                ],
+                flags: MessageFlags.Ephemeral,
+            });
         }
     }
 });
