@@ -25,8 +25,20 @@ export default new SlashCommand({
             )
         ),
     callback: async (logger, client, interaction) => {
-        const { user, options } = interaction;
+        const { user, options, guild } = interaction;
         const subcommand = options.getSubcommand(true) as 'add' | 'remove';
+
+        if (!guild) {
+            await interaction.reply({
+                embeds: [new EmbedBuilder()
+                    .setTitle('Unable to use')
+                    .setDescription(`This command needs to be used within a guild.`)
+                    .setColor(Colors.DarkRed)
+                ],
+                flags: MessageFlags.Ephemeral,
+            });
+            return;
+        }
 
         if (subcommand === 'add') {
             const post = options.getChannel('post', true);
