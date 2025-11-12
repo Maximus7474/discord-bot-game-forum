@@ -93,9 +93,9 @@ export default new SlashCommand({
                     embeds: [new EmbedBuilder()
                         .setTitle(response.created ? 'Post Created and Role Added' : 'Role Added Successfully')
                         .setDescription(
-                            `The role **${role.name}** (<@&${role.id}>) has been successfully linked to the forum post <#${post.id}>.\n`+
-                            '\n**Currently Linked Roles:**\n'+
-                            `\n- ${response.roles.map(r => `<@&${r.role}>`).join('\n- ')}`
+                            `The role **${role.name}** (<@&${role.id}>) has been successfully linked to the forum post <#${post.id}>.\n\n`+
+                            '**Currently Linked Roles:**\n'+
+                            `- ${response.roles.map(r => `<@&${r.role}>`).join('\n- ')}`
                         )
                         .setColor(Colors.DarkGreen)
                     ],
