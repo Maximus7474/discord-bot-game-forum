@@ -102,20 +102,33 @@ export default new SlashCommand({
                     flags: MessageFlags.Ephemeral,
                 });
             } catch (err) {
-                logger.error('Unable to add role to post', err);
+                if ((err as Error).message.includes('Unique constraint failed')) {
+                    await interaction.reply({
+                        embeds: [new EmbedBuilder()
+                            .setTitle('Failed to add role')
+                            .setDescription(
+                                `The attempt to save the post/role to the database failed. The provided role <@&${role.id}> is already listed for the post (<#${post.id}>)`
+                            )
+                            .setColor(Colors.DarkRed)
+                        ],
+                        flags: MessageFlags.Ephemeral,
+                    });
+                } else {
+                    logger.error('Unable to add role to post', err);
 
-                await interaction.reply({
-                    embeds: [new EmbedBuilder()
-                        .setTitle('Failed to add role')
-                        .setDescription(
-                            'The attempt to save the post/role to the database failed.\n'+
-                            `**Error Details:** \`\`\`${(err as Error).message.substring(0, 500)}...\`\`\`\n`+
-                            'Please notify a server administrator with the details above.'
-                        )
-                        .setColor(Colors.DarkRed)
-                    ],
-                    flags: MessageFlags.Ephemeral,
-                });
+                    await interaction.reply({
+                        embeds: [new EmbedBuilder()
+                            .setTitle('Failed to add role')
+                            .setDescription(
+                                'The attempt to save the post/role to the database failed.\n'+
+                                `**Error Details:** \`\`\`${(err as Error).message.substring(0, 500)}...\`\`\`\n`+
+                                'Please notify a server administrator with the details above.'
+                            )
+                            .setColor(Colors.DarkRed)
+                        ],
+                        flags: MessageFlags.Ephemeral,
+                    });
+                }
             }
         } else if (subcommand === 'remove') {
             const post = options.getChannel('post', true);
