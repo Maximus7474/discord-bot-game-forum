@@ -89,17 +89,14 @@ export default new SlashCommand({
                     created: boolean; dbid: string; roles: { role: string }[];
                 } = await ForumPosts.addPost(user, post as PublicThreadChannel, guild.id, role);
 
-                const description = [
-                    `The role **${role.name}** (<@&${role.id}>) has been successfully linked to the forum post <#${post.id}>.`,
-                    response.created ? '\n**Database Action:** This is the first time this post has been indexed in the database.' : '',
-                    '\n**Currently Linked Roles:**',
-                    `\n- ${response.roles.map(r => `<@&${r.role}>`).join('\n- ')}`,
-                ].join('\n');
-
                 await interaction.reply({
                     embeds: [new EmbedBuilder()
                         .setTitle(response.created ? 'Post Created and Role Added' : 'Role Added Successfully')
-                        .setDescription(description)
+                        .setDescription(
+                            `The role **${role.name}** (<@&${role.id}>) has been successfully linked to the forum post <#${post.id}>.\n`+
+                            '\n**Currently Linked Roles:**\n'+
+                            `\n- ${response.roles.map(r => `<@&${r.role}>`).join('\n- ')}`
+                        )
                         .setColor(Colors.DarkGreen)
                     ],
                     flags: MessageFlags.Ephemeral,
