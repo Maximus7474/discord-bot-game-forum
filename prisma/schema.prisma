@@ -43,4 +43,6 @@ model post_roles {
   added_at      DateTime    @default(now())
   forum_postsId String
   usersId       String
+
+  @@unique([forum_postsId, role])
 }
