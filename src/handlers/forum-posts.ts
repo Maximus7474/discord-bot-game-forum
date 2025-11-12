@@ -1,8 +1,10 @@
-import type { ForumChannel, Role, User } from "discord.js";
+import type { APIRole, PublicThreadChannel, Role, User } from "discord.js";
 import { prisma } from "../utils/prisma";
 
+const DEBOUNCE_DELAY = 300;
+
 class ForumPosts {
-    static async addPost(user: User, post: ForumChannel, role: Role): Promise<{
+    static async addPost(user: User, post: PublicThreadChannel, role: Role | APIRole): Promise<{
         created: boolean;
         dbid: string;
         roles: { role: string }[];
@@ -59,6 +61,56 @@ class ForumPosts {
         })
 
         return { created, dbid: dBPost.id, roles };
+    }
+
+    private static debounceTimeouts: Map<string, NodeJS.Timeout> = new Map();
+    static async search(user: User, guildId: string, value: string): Promise<{ value: string; name: string; }[]> {
+        const userId = user.id;
+
+        const existingTimeout = this.debounceTimeouts.get(userId);
+        if (existingTimeout) {
+            clearTimeout(existingTimeout);
+        }
+
+        return new Promise((resolve) => {
+            const newTimeout = setTimeout(async () => {
+                this.debounceTimeouts.delete(userId);
+
+                try {
+                    const results = await prisma.forum_posts.findMany({
+                        select: {
+                            post_id: true,
+                            id: true,
+                        },
+                        where: {
+                            guild_id: guildId,
+                            post_id: {
+                                contains: value,
+                            },
+                        },
+                        take: 20,
+                    });
+
+                    const formattedResults = results.map(post => ({
+                        name: post.post_id,
+                        value: post.id,
+                    }));
+
+                    resolve(formattedResults);
+                } catch (error) {
+                    console.error('Prisma search error:', error);
+                    resolve([]);
+                }
+            }, DEBOUNCE_DELAY);
+
+            this.debounceTimeouts.set(userId, newTimeout);
+
+            if (!value) {
+                clearTimeout(newTimeout);
+                this.debounceTimeouts.delete(userId);
+                resolve([]); 
+            }
+        });
     }
 }
 
