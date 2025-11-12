@@ -64,7 +64,7 @@ async function addJsExtensions(dir) {
 
             if (modified) {
                 await fs.writeFile(fullPath, content, 'utf8');
-                console.log(blue(`\tUpdated imports in: ${path.relative(__dirname, fullPath)}`));
+                // console.log(blue(`\tUpdated imports in: ${path.relative(__dirname, fullPath)}`));
             }
         }
     }
